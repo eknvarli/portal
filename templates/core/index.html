@@ -1,111 +1,202 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto;">
-    <header style="margin-bottom: 5rem; position: relative;">
-        <span class="mono" style="color: var(--gold-metallic); display: block; margin-bottom: 1rem;">//
-            GÜNCEL_İŞLEMLER</span>
-        <h1 style="font-size: 4rem; line-height: 1;">Proje<br><span style="font-style: italic;">Atölyesi</span></h1>
+<div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <header
+        style="margin-bottom: 4rem; position: relative; border-bottom: 1px solid rgba(192, 154, 69, 0.2); padding-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <span class="mono"
+                    style="color: var(--gold-metallic); display: block; margin-bottom: 0.5rem; letter-spacing: 3px;">
+                    // AKTİF PROJE
+                </span>
+                <h1 style="font-size: 3.5rem; line-height: 1.1; margin: 0;">
+                    {% if project %}{{ project.name|upper }}{% else %}PROJE_ATÖLYESİ{% endif %}
+                </h1>
+                <p class="mono" style="opacity: 0.6; margin-top: 1rem; font-size: 0.8rem;">
+                    KAYIT_ID: #{{ project.id|default:"0000" }} | LOKASYON: TR
+                </p>
+            </div>
 
-        <div style="position: absolute; top: 0; right: 0; text-align: right;">
-            <div class="mono" style="font-size: 0.75rem; opacity: 0.5;">DURUM</div>
-            <div class="serif" style="color: var(--gold-light); font-size: 1.5rem;">{{ project.status|upper }}</div>
+            <div style="text-align: right;">
+                <div class="mono" style="font-size: 0.75rem; opacity: 0.5; letter-spacing: 2px;">OPERASYONEL_DURUM</div>
+                <div class="serif"
+                    style="color: var(--gold-light); font-size: 1.8rem; text-shadow: 0 0 15px rgba(192, 154, 69, 0.3);">
+                    {{ project.status|upper|default:"BEKLEMEDE" }}
+                </div>
+            </div>
         </div>
     </header>
 
     {% if project %}
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 4rem;">
-        <div>
-            <div class="premium-border" style="background: var(--bg-elevated); padding: 3rem; margin-bottom: 3rem;">
-                <h3 class="serif" style="margin-bottom: 2.5rem; letter-spacing: 0.1em; font-size: 1.2rem;">
-                    OPERASYONEL İLERLEME</h3>
+    <div style="display: grid; grid-template-columns: 1fr 2fr 1.2fr; gap: 2.5rem; align-items: start;">
 
-                <div style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 1rem;">
+        <aside class="premium-border"
+            style="padding: 2rem; background: var(--bg-elevated); border-left: 3px solid var(--gold-metallic);">
+            <h3 class="serif" style="font-size: 0.9rem; margin-bottom: 2rem; color: var(--gold-light);">
+                PROJE_PARAMETRELERİ</h3>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">MÜŞTERİ / MARKA</label>
+                <span class="serif" style="font-size: 1.1rem;">{{ project.client_name|default:"TurkishSystems" }}</span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">BAŞLANGIÇ TARİHİ</label>
+                <span class="mono" style="font-size: 0.9rem;">{{ project.created_at|date:"d F Y" }}</span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">TEKNOLOJİ YIĞINI</label>
+                <span class="mono" style="font-size: 0.8rem; color: var(--gold-faded);">Python / Django /
+                    Cloud_Nodes</span>
+            </div>
+
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div class="mono" style="font-size: 0.6rem; color: #2ecc71; margin-bottom: 0.5rem;">● SİSTEM_AKTİF</div>
+                <p class="mono" style="font-size: 0.65rem; opacity: 0.5; line-height: 1.6;">
+                    Tüm veriler uçtan uca şifrelenmiştir. Erişim yetkisi: Yönetici.
+                </p>
+            </div>
+        </aside>
+
+        <main>
+            <div class="premium-border"
+                style="background: var(--bg-elevated); padding: 3rem; margin-bottom: 2.5rem; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -20px; right: -20px; font-size: 10rem; opacity: 0.03; font-weight: bold;"
+                    class="serif">
+                    {{ project.progress }}
+                </div>
+
+                <h3 class="serif" style="margin-bottom: 2.5rem; letter-spacing: 0.2em; font-size: 1.1rem;">GÜNCEL
+                    İLERLEME</h3>
+
+                <div style="display: flex; align-items: baseline; gap: 15px;">
                     <span class="serif"
-                        style="font-size: 6rem; line-height: 1; color: var(--gold-metallic);">{{project.progress}}</span>
-                    <span class="mono" style="font-size: 1.5rem; color: var(--gold-light);">%</span>
+                        style="font-size: 7rem; line-height: 0.8; color: var(--gold-metallic); font-weight: 300;">
+                        {{project.progress}}
+                    </span>
+                    <span class="mono" style="font-size: 2rem; color: var(--gold-light);">%</span>
                 </div>
 
                 <div
-                    style="width: 100%; height: 2px; background: rgba(255,255,255,0.05); margin: 2rem 0; position: relative;">
+                    style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); margin: 2.5rem 0; position: relative; border-radius: 2px;">
                     <div
-                        style="width: {{ project.progress }}%; height: 2px; background: var(--gold-metallic); position: absolute; top: 0; left: 0; box-shadow: 0 0 10px var(--gold-metallic);">
+                        style="width: {{ project.progress }}%; height: 100%; background: linear-gradient(90deg, var(--gold-faded), var(--gold-metallic)); position: absolute; top: 0; left: 0; box-shadow: 0 0 20px rgba(192, 154, 69, 0.4);">
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 40px; margin-top: 3rem;">
-                    <div>
-                        <div class="mono" style="font-size: 0.65rem; opacity: 0.5;">ZAMAN DAMGASI</div>
-                        <div class="mono" style="color: var(--text-pure);">{{ project.created_at|date:"Y.m.d" }}</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div
+                        style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">SON_GÜNCELLEME
+                        </div>
+                        <div class="mono" style="font-size: 0.8rem;">{{ project.updated_at|date:"H:i /d.m.y"|default:"ŞİMDİ" }}</div>
                     </div>
-                    <div>
-                        <div class="mono" style="font-size: 0.65rem; opacity: 0.5;">AŞAMA</div>
-                        <div class="mono" style="color: var(--text-pure);">{{ project.status|upper }}</div>
+                    <div
+                        style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">KRİTİK_EŞİK</div>
+                        <div class="mono" style="font-size: 0.8rem; color: var(--gold-light);">{{project.status|upper }}</div>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 4rem;">
+            <div>
                 <h3 class="serif"
-                    style="margin-bottom: 2rem; opacity: 0.8; font-size: 1rem; border-bottom: var(--border-gold); display: inline-block; padding-bottom: 5px;">
-                    AKSİYON_GEREKLİ</h3>
+                    style="margin-bottom: 1.5rem; font-size: 0.9rem; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
+                    <span style="width: 8px; height: 8px; background: var(--gold-metallic); border-radius: 50%;"></span>
+                    ONAY BEKLEYEN PROTOKOLLER
+                </h3>
+
                 {% if proposals %}
                 {% for proposal in proposals %}
                 <div class="premium-border"
-                    style="padding: 2rem; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <div>
-                        <span class="serif" style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">{{proposal.project.name }}</span>
-                        <span class="mono" style="font-size: 0.7rem; opacity: 0.6;">{{ proposal.content|truncatewords:15}}</span>
+                    style="padding: 1.5rem 2rem; background: rgba(192, 154, 69, 0.03); display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border: 1px solid rgba(192, 154, 69, 0.1);">
+                    <div style="max-width: 70%;">
+                        <span class="mono"
+                            style="font-size: 0.6rem; color: var(--gold-light); display: block; margin-bottom: 0.3rem;">DOKÜMAN_REF:
+                            #PRP-{{ proposal.id }}</span>
+                        <span class="serif" style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">{{proposal.title|default:"Teknik Revizyon Onayı" }}</span>
+                        <span class="mono" style="font-size: 0.75rem; opacity: 0.7; line-height: 1.4;">{{proposal.content|truncatewords:12 }}</span>
                     </div>
-                    <a href="{% url 'approve_proposal' proposal.id %}" class="btn-gold">
-                        Onayla
+                    <a href="{% url 'approve_proposal' proposal.id %}" class="btn-gold"
+                        style="text-decoration: none; padding: 0.8rem 1.5rem; font-size: 0.7rem; letter-spacing: 2px;">
+                        PROTOKOLÜ_ONAYLA
                     </a>
                 </div>
                 {% endfor %}
                 {% else %}
-                <p class="mono" style="opacity: 0.4; font-size: 0.8rem; margin-top: 1rem;">Tüm protokoller onaylandı.
-                    Bekleyen
-                    onay yok.</p>
+                <div style="padding: 3rem; border: 1px dashed rgba(255,255,255,0.1); text-align: center;">
+                    <p class="mono" style="opacity: 0.4; font-size: 0.8rem;">Tüm operasyonel protokoller yürürlükte.
+                        Bekleyen aksiyon bulunamadı.</p>
+                </div>
                 {% endif %}
             </div>
-        </div>
+        </main>
 
         <aside>
-            <div class="premium-border" style="padding: 2rem; background: var(--bg-elevated);">
-                <h3 class="serif" style="margin-bottom: 2rem; font-size: 1rem;">HESAP DEFTERİ</h3>
-                {% for payment in payments %}
-                <div
-                    style="margin-bottom: 2.5rem; position: relative; padding-left: 1.5rem; border-left: 1px solid var(--gold-faded);">
+            <div class="premium-border"
+                style="padding: 2rem; background: var(--bg-elevated); border-top: 2px solid var(--gold-metallic);">
+                <h3 class="serif" style="margin-bottom: 2rem; font-size: 1rem; letter-spacing: 1px;">MALİ_DÖKÜM</h3>
+
+                <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                    {% for payment in payments %}
                     <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span class="mono" style="color: var(--text-pure);">{{ payment.amount }} TRY</span>
-                        <span class="mono"
-                            style="font-size: 0.6rem; padding: 2px 6px; border: 1px solid {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %}; color: {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %};">
-                            {{ payment.status|upper }}
-                        </span>
+                        style="margin-bottom: 2rem; position: relative; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span class="mono" style="font-size: 1rem; color: var(--text-pure); font-weight: bold;">
+                                {{ payment.amount|floatformat:2 }} <span
+                                    style="font-size: 0.7rem; color: var(--gold-light);">TRY</span>
+                            </span>
+                            <span class="mono"
+                                style="font-size: 0.55rem; padding: 3px 8px; border-radius: 2px; letter-spacing: 1px;
+                                border: 1px solid {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %}; 
+                                color: {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %};">
+                                {{ payment.status|upper }}
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="mono" style="font-size: 0.65rem; opacity: 0.4;">VADE: {{
+                                payment.due_date|date:"d.m.Y" }}</span>
+                            <span class="mono" style="font-size: 0.6rem; opacity: 0.6;">REF_{{ forloop.counter|add:100
+                                }}</span>
+                        </div>
                     </div>
-                    <div class="mono" style="font-size: 0.7rem; opacity: 0.5;">
-                        VADE: {{ payment.due_date|date:"d.m.Y" }}
-                    </div>
+                    {% empty %}
+                    <p class="mono" style="opacity: 0.3; font-size: 0.7rem; text-align: center; padding: 2rem 0;">Hesap
+                        defterinde kayıtlı veri bulunmuyor.</p>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                <p class="mono" style="opacity: 0.3; font-size: 0.7rem;">Hesap defteri boş.</p>
-                {% endfor %}
 
                 <div
-                    style="margin-top: 3rem; background: rgba(192, 154, 69, 0.05); padding: 1.5rem; border: var(--border-gold);">
-                    <div class="mono" style="font-size: 0.65rem; color: var(--gold-light);">SİSTEM_GÜNLÜĞÜ</div>
-                    <p class="mono" style="font-size: 0.7rem; margin-top: 0.5rem;">Bağlantı stabil. Tüm varlıklar
-                        İstanbul veri merkezi ile senkronize edildi.</p>
+                    style="margin-top: 2rem; background: rgba(192, 154, 69, 0.05); padding: 1.5rem; border: 1px solid rgba(192, 154, 69, 0.2); position: relative;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
+                        <span
+                            style="width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 8px #2ecc71;"></span>
+                        <div class="mono" style="font-size: 0.65rem; color: var(--gold-light); letter-spacing: 1px;">
+                            SİSTEM_GÜNLÜĞÜ</div>
+                    </div>
+                    <p class="mono" style="font-size: 0.65rem; line-height: 1.5; opacity: 0.8;">
+                        Bağlantı kararlı. Veri paketleri <b>TurkishSystems</b> ana sunucuları ile %100 senkronize
+                        edildi. Son denetim başarılı.
+                    </p>
                 </div>
             </div>
         </aside>
     </div>
+
     {% else %}
-    <div class="premium-border" style="padding: 5rem; text-align: center; background: var(--bg-elevated);">
-        <h2 class="serif">Aktif Proje Yok</h2>
-        <p class="mono" style="margin-top: 1rem; opacity: 0.5;">Geliştirmeye başlamak için TurkishSystems ile
-            protokolü başlatın.</p>
+    <div class="premium-border"
+        style="padding: 8rem 2rem; text-align: center; background: var(--bg-elevated); margin-top: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 2rem; opacity: 0.2;">◈</div>
+        <h2 class="serif" style="font-size: 2rem; letter-spacing: 0.2em;">AKTİF PROJE BULUNAMADI</h2>
+        <p class="mono"
+            style="margin-top: 1.5rem; opacity: 0.5; max-width: 500px; margin-left: auto; margin-right: auto;">
+            Sistemde adınıza tanımlı aktif bir süreç bulunmamaktadır. Yeni bir geliştirme protokolü başlatmak için
+            danışmanınızla iletişime geçin.
+        </p>
+        <button class="btn-gold" style="margin-top: 3rem; padding: 1rem 3rem;">YENİ_TALEP_OLUŞTUR</button>
     </div>
     {% endif %}
 </div>

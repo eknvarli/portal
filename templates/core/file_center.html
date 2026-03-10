@@ -18,7 +18,8 @@
                 style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; border-bottom: var(--border-gold); padding-bottom: 2rem;">
                 <div>
                     <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 0.5rem;">{{ doc.name }}</h3>
-                    <div class="mono" style="font-size: 0.7rem; opacity: 0.5;">YÜKLEME_ZAMANI: {{doc.uploaded_at|date:"Y.m.d // H:i" }}</div>
+                    <div class="mono" style="font-size: 0.7rem; opacity: 0.5;">YÜKLEME_ZAMANI:
+                        {{doc.uploaded_at|date:"Y.m.d // H:i" }}</div>
                 </div>
                 <a href="{{ doc.file.url }}" class="btn-gold" download>
                     Dosyayı_İndir
@@ -36,8 +37,9 @@
                             style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--gold-metallic);">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                                 <span class="mono"
-                                    style="font-weight: 600; font-size: 0.75rem; color: var(--text-pure);">{{comment.user.username|upper }}</span>
-                                <span class="mono" style="font-size: 0.6rem; opacity: 0.4;">{{comment.timestamp|date:"d.m // H:i" }}</span>
+                                    style="font-weight: 600; font-size: 0.75rem; color: var(--text-pure);">{{comment.user.username|upper}}</span>
+                                <span class="mono"
+                                    style="font-size: 0.6rem; opacity: 0.4;">{{comment.timestamp|date:"d.m //H:i"}}</span>
                             </div>
                             <p style="font-size: 0.9rem; color: var(--text-muted);">{{ comment.text }}</p>
                         </div>
