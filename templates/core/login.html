@@ -42,9 +42,9 @@
 {% block content %}
 <div class="premium-border login-shell">
     <div style="text-align: center; margin-bottom: 4rem;">
-        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 1rem;">Bağlan</h2>
-        <p class="mono" style="font-size: 0.75rem; color: var(--gold-light); letter-spacing: 0.2em;">PROTOKOL //
-            ATLAS_01</p>
+        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 1rem;">Giriş Yap</h2>
+        <p class="mono" style="font-size: 0.75rem; color: var(--gold-light); letter-spacing: 0.16em;">MÜŞTERİ GİRİŞİ //
+            PORTAL ERİŞİMİ</p>
     </div>
 
     <form method="post">
@@ -61,19 +61,18 @@
         {% if form.errors %}
         <div class="mono"
             style="color: #e74c3c; font-size: 0.7rem; margin-bottom: 2.5rem; background: rgba(231, 76, 60, 0.05); padding: 1rem; border: 1px solid rgba(231, 76, 60, 0.2);">
-            GECERSIZ_MUSTERI_NUMARASI: Bu numara ile aktif hesap bulunamadi.
+            Geçersiz müşteri numarası. Bu numarayla eşleşen aktif bir hesap bulunamadı.
         </div>
         {% endif %}
 
         <button type="submit" class="btn-gold" style="width: 100%; letter-spacing: 0.3em;">
-            Bağlantı Kur
+            Portala Gir
         </button>
     </form>
 
     <div style="margin-top: 4rem; text-align: center;" class="mono">
-        <span style="font-size: 0.6rem; opacity: 0.4; display: block; margin-bottom: 0.5rem;">TÜM VERİLER ŞİFRELENDİ //
-            TLS
-            1.3</span>
+        <span style="font-size: 0.6rem; opacity: 0.4; display: block; margin-bottom: 0.5rem;">Tüm veriler şifreli bağlantı ile korunur //
+            TLS 1.3</span>
         <span style="font-size: 0.7rem; color: var(--gold-metallic);">© 2026 TurkishSystems Atölyesi</span>
     </div>
 </div>
