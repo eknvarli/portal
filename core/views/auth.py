@@ -1,7 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
 from ..forms import CustomerLoginForm
 
 def login_view(request):
@@ -9,10 +7,10 @@ def login_view(request):
         return redirect('index')
     
     if request.method == 'POST':
-        form = CustomerLoginForm(data=request.POST)
+        form = CustomerLoginForm(request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('index')
     else:
         form = CustomerLoginForm()

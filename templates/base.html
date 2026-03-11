@@ -87,11 +87,51 @@
             padding: 3rem 2rem;
             display: flex;
             flex-direction: column;
+            gap: 2rem;
+            overflow-y: auto;
             z-index: 100;
         }
 
+        .announcement-panel {
+            border: var(--border-gold);
+            background: rgba(192, 154, 69, 0.04);
+            padding: 1.25rem;
+        }
+
+        .announcement-list {
+            display: grid;
+            gap: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .announcement-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(192, 154, 69, 0.12);
+            padding: 0.9rem 0.9rem 1.6rem 0.9rem;
+        }
+
+        .announcement-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .announcement-item p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .announcement-meta {
+            position: absolute;
+            left: 0.9rem;
+            bottom: 0.6rem;
+            font-size: 0.58rem;
+            opacity: 0.65;
+        }
+
         .brand-logo {
-            margin-bottom: 4rem;
+            margin-bottom: 1rem;
             text-decoration: none;
         }
 
@@ -147,6 +187,10 @@
         .sidebar-footer {
             padding-top: 2rem;
             border-top: var(--border-gold);
+        }
+
+        .mobile-topbar {
+            display: none;
         }
 
         .main-view {
@@ -245,6 +289,10 @@
                 padding: 2rem 1rem;
             }
 
+            .announcement-panel {
+                display: none;
+            }
+
             .brand-logo h2 span,
             .nav-link span,
             .sidebar-footer span {
@@ -256,6 +304,63 @@
                 padding: 2rem;
             }
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 40px;
+            }
+
+            .bg-glow-ring {
+                width: 320px;
+                height: 320px;
+                filter: blur(55px);
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-topbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 1rem 1rem 0 1rem;
+            }
+
+            .mobile-topbar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                justify-content: flex-end;
+            }
+
+            .mobile-topbar-nav a {
+                padding: 0.55rem 0.85rem;
+                font-size: 0.68rem;
+                letter-spacing: 0.08em;
+            }
+
+            .main-view {
+                margin-left: 0;
+                padding: 1rem 1rem 5rem 1rem;
+            }
+
+            .premium-border::before,
+            .premium-border::after {
+                width: 7px;
+                height: 7px;
+            }
+
+            .marquee-strip {
+                height: 32px;
+            }
+
+            .marquee-item {
+                font-size: 0.62rem;
+                padding: 0 1rem;
+            }
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -265,7 +370,37 @@
     <div class="bg-glow-ring ring-2"></div>
 
     {% if user.is_authenticated %}
+    <div class="mobile-topbar">
+        <a href="{% url 'index' %}" class="brand-logo" style="margin-bottom: 0;">
+            <h2 style="font-size: 1.25rem;">TS<span>Portal</span></h2>
+        </a>
+        <div class="mobile-topbar-nav">
+            <a href="{% url 'index' %}" class="btn-gold">Genel</a>
+            <a href="{% url 'file_center' %}" class="btn-gold">Dosyalar</a>
+            <a href="{% url 'finance_overview' %}" class="btn-gold">Finans</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated %}
     <aside class="sidebar">
+        <section class="announcement-panel">
+            <div class="mono" style="color: var(--gold-light); font-size: 0.7rem; letter-spacing: 2px;">DUYURULAR</div>
+            <div class="announcement-list">
+                {% for announcement in sidebar_announcements %}
+                <article class="announcement-item">
+                    <h4 class="serif">{{ announcement.title }}</h4>
+                    <p>{{ announcement.description|truncatewords:20 }}</p>
+                    <div class="mono announcement-meta">{{ announcement.created_by.username }}</div>
+                </article>
+                {% empty %}
+                <div class="announcement-item">
+                    <p>Henüz paylaşılmış bir duyuru bulunmuyor.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
         <a href="{% url 'index' %}" class="brand-logo">
             <h2>TS<span>Portal</span></h2>
         </a>
@@ -285,6 +420,13 @@
                     <span>Dosya Merkezi</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{% url 'finance_overview' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'finance_overview' %}active{% endif %}">
+                    <i class="fas fa-wallet"></i>
+                    <span>Finans</span>
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-footer">
@@ -301,6 +443,16 @@
 
     <main class="main-view" {% if not user.is_authenticated%}
         style="margin-left: 0; display: flex; align-items: center; justify-content: center;" {% endif %}>
+        {% if messages %}
+        <div style="max-width: 1200px; margin: 0 auto 1.5rem auto;">
+            {% for message in messages %}
+            <div class="premium-border"
+                style="padding: 1rem 1.25rem; background: rgba(46, 204, 113, 0.08); border-color: rgba(46, 204, 113, 0.35); color: var(--text-pure); margin-bottom: 1rem;">
+                <span class="mono" style="font-size: 0.75rem; color: #9ae6b4;">{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 

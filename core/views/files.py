@@ -6,7 +6,11 @@ from ..forms import CommentForm
 @login_required
 def file_center(request):
     projects = request.user.projects.all()
+    selected_project_id = request.GET.get('project')
     documents = Document.objects.filter(project__in=projects).prefetch_related('comments')
+
+    if selected_project_id:
+        documents = documents.filter(project_id=selected_project_id)
     
     if request.method == 'POST':
         doc_id = request.POST.get('document_id')
@@ -24,4 +28,5 @@ def file_center(request):
     return render(request, 'core/file_center.html', {
         'documents': documents,
         'comment_form': form,
+        'selected_project_id': selected_project_id,
     })

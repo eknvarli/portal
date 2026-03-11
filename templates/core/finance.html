@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <header style="margin-bottom: 3rem; border-bottom: 1px solid rgba(192, 154, 69, 0.2); padding-bottom: 2rem;">
+        <span class="mono" style="color: var(--gold-metallic); display: block; margin-bottom: 0.8rem; letter-spacing: 2px;">// FINANS MERKEZI</span>
+        <h1 style="font-size: 3.4rem; line-height: 1.05;">Odeme ve Finans<br><span style="font-style: italic;">Bildirimleri</span></h1>
+        <p class="mono" style="margin-top: 1.2rem; opacity: 0.55; max-width: 700px;">Size iletilen odeme ve finans bildirimleri bu alanda listelenir. Otomatik bildirimler planlanan tarihte gorunur hale gelir.</p>
+    </header>
+
+    <section class="premium-border" style="background: var(--bg-elevated); padding: 2rem; margin-bottom: 2rem;">
+        <div class="mono" style="font-size: 0.7rem; color: var(--gold-light); letter-spacing: 2px; margin-bottom: 1rem;">BANKA BILGILERI</div>
+        {% if bank_information %}
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem;">
+            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(192, 154, 69, 0.12);">
+                <div class="mono" style="font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.5rem;">IBAN SAHIBI</div>
+                <div class="serif" style="font-size: 1.5rem;">{{ bank_information.iban_owner }}</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(192, 154, 69, 0.12);">
+                <div class="mono" style="font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.5rem;">IBAN</div>
+                <div class="mono" style="font-size: 1rem; color: var(--text-pure); word-break: break-all;">{{ bank_information.iban }}</div>
+            </div>
+        </div>
+        {% else %}
+        <div style="padding: 1.5rem; border: 1px dashed rgba(255,255,255,0.15);">
+            <p class="mono" style="opacity: 0.6;">Banka bilgileri henuz tanimlanmadi.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section>
+        <div class="mono" style="font-size: 0.7rem; color: var(--gold-light); letter-spacing: 2px; margin-bottom: 1rem;">BILDIRIMLER</div>
+        <div style="display: grid; gap: 1.25rem;">
+            {% for notification in finance_notifications %}
+            <article class="premium-border" style="background: var(--bg-elevated); padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1.2rem; align-items: start;">
+                    <div>
+                        <div class="mono" style="font-size: 0.65rem; color: var(--gold-light); letter-spacing: 1px; margin-bottom: 0.45rem;">
+                            {{ notification.get_notification_type_display|upper }} / {{ notification.get_delivery_type_display|upper }}
+                        </div>
+                        <h2 class="serif" style="font-size: 1.7rem; margin-bottom: 0.4rem;">{{ notification.title }}</h2>
+                        <p class="mono" style="opacity: 0.6; font-size: 0.75rem;">SEBEP: {{ notification.reason }}</p>
+                    </div>
+                    <div style="text-align: right; min-width: 180px;">
+                        <div class="mono" style="font-size: 0.65rem; opacity: 0.55; margin-bottom: 0.35rem;">MIKTAR</div>
+                        <div class="serif" style="font-size: 2rem; color: var(--gold-light);">{{ notification.amount|floatformat:2 }} TRY</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.75;">{{ notification.description }}</p>
+
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.45; margin-bottom: 0.4rem;">SON GONDERIM GUNU</div>
+                        <div class="mono" style="font-size: 0.85rem; color: var(--text-pure);">{{ notification.due_date|date:"d.m.Y" }}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.45; margin-bottom: 0.4rem;">GONDERIM ZAMANI</div>
+                        <div class="mono" style="font-size: 0.85rem; color: var(--text-pure);">{{ notification.sent_at|date:"d.m.Y H:i" }}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.45; margin-bottom: 0.4rem;">OLUSTURAN</div>
+                        <div class="mono" style="font-size: 0.85rem; color: var(--text-pure);">{{ notification.created_by.username|default:"Sistem" }}</div>
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="premium-border" style="background: var(--bg-elevated); padding: 3rem; text-align: center;">
+                <p class="mono" style="opacity: 0.55;">Size ait gorunur bir finans bildirimi bulunmuyor.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

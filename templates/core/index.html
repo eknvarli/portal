@@ -1,16 +1,156 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .dashboard-shell {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .dashboard-header {
+        margin-bottom: 4rem;
+        position: relative;
+        border-bottom: 1px solid rgba(192, 154, 69, 0.2);
+        padding-bottom: 2rem;
+    }
+
+    .dashboard-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1.5rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1.2fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
+
+    .status-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .project-selector-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .project-selector-card {
+        display: block;
+        text-decoration: none;
+        padding: 1.2rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(192, 154, 69, 0.14);
+        transition: var(--transition-smooth);
+    }
+
+    .project-selector-card:hover,
+    .project-selector-card.active {
+        border-color: var(--gold-metallic);
+        box-shadow: var(--glow);
+        transform: translateY(-2px);
+    }
+
+    .project-action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 2rem;
+    }
+
+    .project-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .project-request-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-shell {
+            padding: 1rem 0;
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.25rem;
+        }
+
+        .dashboard-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .status-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-mobile-title {
+            font-size: 2.2rem !important;
+        }
+
+        .dashboard-progress-number {
+            font-size: 4rem !important;
+        }
+
+        .dashboard-status-box {
+            width: 100%;
+        }
+
+        .dashboard-action-button {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 0.9rem !important;
+        }
+
+        .project-action-grid,
+        .project-metrics {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
-    <header
-        style="margin-bottom: 4rem; position: relative; border-bottom: 1px solid rgba(192, 154, 69, 0.2); padding-bottom: 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+<div class="dashboard-shell">
+    <header class="dashboard-header">
+        {% if projects %}
+        <div class="project-selector-grid">
+            {% for listed_project in projects %}
+            <a href="{% url 'index' %}?project={{ listed_project.id }}"
+                class="project-selector-card premium-border {% if project and listed_project.id == project.id %}active{% endif %}">
+                <div class="mono" style="font-size: 0.6rem; color: var(--gold-light); margin-bottom: 0.45rem;">PROJE_SECIMI</div>
+                <div class="serif" style="font-size: 1.2rem; margin-bottom: 0.35rem;">{{ listed_project.name }}</div>
+                <div class="mono" style="font-size: 0.7rem; opacity: 0.6;">{{ listed_project.status|upper }} / {{ listed_project.progress }}%</div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="dashboard-header-row">
             <div>
                 <span class="mono"
                     style="color: var(--gold-metallic); display: block; margin-bottom: 0.5rem; letter-spacing: 3px;">
                     // AKTİF PROJE
                 </span>
-                <h1 style="font-size: 3.5rem; line-height: 1.1; margin: 0;">
+                <h1 class="dashboard-mobile-title" style="font-size: 3.5rem; line-height: 1.1; margin: 0;">
                     {% if project %}{{ project.name|upper }}{% else %}PROJE_ATÖLYESİ{% endif %}
                 </h1>
                 <p class="mono" style="opacity: 0.6; margin-top: 1rem; font-size: 0.8rem;">
@@ -18,7 +158,11 @@
                 </p>
             </div>
 
-            <div style="text-align: right;">
+            <div class="dashboard-status-box" style="text-align: right;">
+                    <a href="{% url 'create_service_request' %}{% if project %}?project={{ project.id }}{% endif %}" class="btn-gold dashboard-action-button"
+                        style="margin-bottom: 1rem; padding: 0.85rem 1.5rem; font-size: 0.7rem; letter-spacing: 2px;">
+                        YENI_TALEP_OLUSTUR
+                    </a>
                 <div class="mono" style="font-size: 0.75rem; opacity: 0.5; letter-spacing: 2px;">OPERASYONEL_DURUM</div>
                 <div class="serif"
                     style="color: var(--gold-light); font-size: 1.8rem; text-shadow: 0 0 15px rgba(192, 154, 69, 0.3);">
@@ -29,7 +173,7 @@
     </header>
 
     {% if project %}
-    <div style="display: grid; grid-template-columns: 1fr 2fr 1.2fr; gap: 2.5rem; align-items: start;">
+    <div class="dashboard-grid">
 
         <aside class="premium-border"
             style="padding: 2rem; background: var(--bg-elevated); border-left: 3px solid var(--gold-metallic);">
@@ -38,18 +182,33 @@
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">MÜŞTERİ / MARKA</label>
-                <span class="serif" style="font-size: 1.1rem;">{{ project.client_name|default:"TurkishSystems" }}</span>
+                <span class="serif" style="font-size: 1.1rem;">{{ project.display_client_label }}</span>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">BAŞLANGIÇ TARİHİ</label>
-                <span class="mono" style="font-size: 0.9rem;">{{ project.created_at|date:"d F Y" }}</span>
+                <span class="mono" style="font-size: 0.9rem;">{% if project.start_date %}{{ project.start_date|date:"d F Y" }}{% else %}{{ project.created_at|date:"d F Y" }}{% endif %}</span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">HEDEF TARİH</label>
+                <span class="mono" style="font-size: 0.9rem;">{{ project.target_date|date:"d F Y"|default:"BELIRLENMEDI" }}</span>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">TEKNOLOJİ YIĞINI</label>
-                <span class="mono" style="font-size: 0.8rem; color: var(--gold-faded);">Python / Django /
-                    Cloud_Nodes</span>
+                <span class="mono" style="font-size: 0.8rem; color: var(--gold-faded);">{{ project.technology_stack|default:"Tanımlanmadı" }}</span>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05); margin-top: 2rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block; margin-bottom: 0.5rem;">PROJE OZETI</label>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">{{ project.summary|default:"Bu proje icin yonetici tarafindan ozet eklenmedi." }}</p>
+            </div>
+
+            <div class="project-action-grid">
+                <a href="{% url 'file_center' %}?project={{ project.id }}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">DOSYALAR</a>
+                <a href="{% url 'finance_overview' %}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">FINANS</a>
+                <a href="{% url 'create_service_request' %}?project={{ project.id }}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">TALEP OLUSTUR</a>
             </div>
 
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
@@ -71,8 +230,8 @@
                 <h3 class="serif" style="margin-bottom: 2.5rem; letter-spacing: 0.2em; font-size: 1.1rem;">GÜNCEL
                     İLERLEME</h3>
 
-                <div style="display: flex; align-items: baseline; gap: 15px;">
-                    <span class="serif"
+                <div style="display: flex; align-items: baseline; gap: 15px; flex-wrap: wrap;">
+                    <span class="serif dashboard-progress-number"
                         style="font-size: 7rem; line-height: 0.8; color: var(--gold-metallic); font-weight: 300;">
                         {{project.progress}}
                     </span>
@@ -86,7 +245,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="status-grid">
                     <div
                         style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">SON_GÜNCELLEME
@@ -101,7 +260,22 @@
                 </div>
             </div>
 
-            <div>
+            <div class="project-metrics">
+                <a href="{% url 'file_center' %}?project={{ project.id }}" class="premium-border" style="text-decoration: none; background: rgba(255,255,255,0.02); padding: 1.25rem;">
+                    <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 0.4rem;">DOSYA SAYISI</div>
+                    <div class="serif" style="font-size: 2rem; color: var(--gold-light);">{{ project_documents_count }}</div>
+                </a>
+                <a href="#project-requests" class="premium-border" style="text-decoration: none; background: rgba(255,255,255,0.02); padding: 1.25rem;">
+                    <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 0.4rem;">TALEP SAYISI</div>
+                    <div class="serif" style="font-size: 2rem; color: var(--gold-light);">{{ project_request_count }}</div>
+                </a>
+                <a href="#project-proposals" class="premium-border" style="text-decoration: none; background: rgba(255,255,255,0.02); padding: 1.25rem;">
+                    <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 0.4rem;">BEKLEYEN ONAY</div>
+                    <div class="serif" style="font-size: 2rem; color: var(--gold-light);">{{ proposals|length }}</div>
+                </a>
+            </div>
+
+            <div id="project-proposals">
                 <h3 class="serif"
                     style="margin-bottom: 1.5rem; font-size: 0.9rem; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
                     <span style="width: 8px; height: 8px; background: var(--gold-metallic); border-radius: 50%;"></span>
@@ -131,6 +305,33 @@
                         Bekleyen aksiyon bulunamadı.</p>
                 </div>
                 {% endif %}
+            </div>
+
+            <div id="project-requests" style="margin-top: 2.5rem;">
+                <h3 class="serif"
+                    style="margin-bottom: 1.5rem; font-size: 0.9rem; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
+                    <span style="width: 8px; height: 8px; background: var(--gold-metallic); border-radius: 50%;"></span>
+                    PROJE TALEPLERI
+                </h3>
+
+                <div class="project-request-list">
+                    {% for request_item in service_requests %}
+                    <div class="premium-border" style="padding: 1.35rem 1.5rem; background: rgba(255,255,255,0.02);">
+                        <div style="display: flex; justify-content: space-between; gap: 1rem; align-items: start; margin-bottom: 0.6rem; flex-wrap: wrap;">
+                            <div>
+                                <div class="serif" style="font-size: 1.1rem; margin-bottom: 0.2rem;">{{ request_item.title }}</div>
+                                <div class="mono" style="font-size: 0.66rem; opacity: 0.6;">{{ request_item.created_at|date:"d.m.Y H:i" }}</div>
+                            </div>
+                            <div class="mono" style="font-size: 0.66rem; color: var(--gold-light);">{{ request_item.get_urgency_display|upper }} / {{ request_item.budget|floatformat:2 }} TRY</div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">{{ request_item.description|truncatewords:18 }}</p>
+                    </div>
+                    {% empty %}
+                    <div style="padding: 2rem; border: 1px dashed rgba(255,255,255,0.1); text-align: center;">
+                        <p class="mono" style="opacity: 0.45; font-size: 0.8rem;">Bu projeye ait kayitli talep bulunmuyor.</p>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </main>
 
@@ -196,7 +397,10 @@
             Sistemde adınıza tanımlı aktif bir süreç bulunmamaktadır. Yeni bir geliştirme protokolü başlatmak için
             danışmanınızla iletişime geçin.
         </p>
-        <button class="btn-gold" style="margin-top: 3rem; padding: 1rem 3rem;">YENİ_TALEP_OLUŞTUR</button>
+        <a href="{% url 'create_service_request' %}" class="btn-gold"
+            style="margin-top: 3rem; padding: 1rem 3rem; text-decoration: none;">
+            YENI_TALEP_OLUSTUR
+        </a>
     </div>
     {% endif %}
 </div>
