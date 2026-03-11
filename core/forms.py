@@ -15,7 +15,7 @@ class MultipleFileField(forms.FileField):
     def clean(self, data, initial=None):
         if not data:
             if self.required:
-                raise forms.ValidationError('En az bir dosya yuklemelisiniz.')
+                raise forms.ValidationError('En az bir dosya yüklemelisiniz.')
             return []
 
         if not isinstance(data, (list, tuple)):
@@ -37,12 +37,12 @@ class MultipleFileField(forms.FileField):
 
 class CustomerLoginForm(forms.Form):
     customer_number = forms.CharField(
-        label='Musteri Numarasi',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Musteri numaranizi girin'}),
+        label='Müşteri numarası',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Müşteri numaranızı girin'}),
     )
 
     error_messages = {
-        'invalid_login': 'Bu musteri numarasi ile eslesen aktif bir hesap bulunamadi.',
+        'invalid_login': 'Bu müşteri numarası ile eşleşen aktif bir hesap bulunamadı.',
     }
 
     def __init__(self, *args, **kwargs):
@@ -72,7 +72,7 @@ class CommentForm(forms.ModelForm):
 class ServiceRequestForm(forms.ModelForm):
     project_choice = forms.ChoiceField(label='Proje', choices=())
     attachments = MultipleFileField(
-        label='Talep Dosyalari',
+        label='Talep dosyaları',
         required=True,
         widget=MultipleFileInput(attrs={'multiple': True, 'accept': '.png,.jpg,.jpeg,.webp'}),
     )
@@ -81,16 +81,16 @@ class ServiceRequestForm(forms.ModelForm):
         model = ServiceRequest
         fields = ['title', 'description', 'budget', 'urgency']
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Talep adini girin'}),
-            'description': forms.Textarea(attrs={'placeholder': 'Talep aciklamasini yazin', 'rows': 6}),
+            'title': forms.TextInput(attrs={'placeholder': 'Talep adını girin'}),
+            'description': forms.Textarea(attrs={'placeholder': 'Talep açıklamasını yazın', 'rows': 6}),
             'budget': forms.NumberInput(attrs={'placeholder': '0.00', 'step': '0.01', 'min': '0'}),
             'urgency': forms.Select(),
         }
         labels = {
-            'title': 'Talep Adi',
-            'description': 'Talep Aciklamasi',
-            'budget': 'Talep Butcesi',
-            'urgency': 'Talep Aciliyeti',
+            'title': 'Talep adı',
+            'description': 'Talep açıklaması',
+            'budget': 'Talep bütçesi',
+            'urgency': 'Talep önceliği',
         }
 
     def __init__(self, *args, user=None, selected_project_id=None, **kwargs):
@@ -116,7 +116,7 @@ class ServiceRequestForm(forms.ModelForm):
         for uploaded_file in files:
             extension = Path(uploaded_file.name).suffix.lower()
             if extension not in allowed_extensions:
-                raise forms.ValidationError('Sadece png, jpg, jpeg ve webp dosyalari yukleyebilirsiniz.')
+                raise forms.ValidationError('Sadece PNG, JPG, JPEG ve WEBP dosyaları yükleyebilirsiniz.')
 
         return files
 

@@ -5,7 +5,7 @@
     .dashboard-shell {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 2rem;
+        padding: 1.5rem clamp(0.25rem, 1.5vw, 1rem);
     }
 
     .dashboard-header {
@@ -20,12 +20,13 @@
         justify-content: space-between;
         align-items: flex-end;
         gap: 1.5rem;
+        flex-wrap: wrap;
     }
 
     .dashboard-grid {
         display: grid;
-        grid-template-columns: 1fr 2fr 1.2fr;
-        gap: 2.5rem;
+        grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.6fr) minmax(260px, 1fr);
+        gap: 1.75rem;
         align-items: start;
     }
 
@@ -58,6 +59,12 @@
         transform: translateY(-2px);
     }
 
+    .dashboard-main-card,
+    .dashboard-side-card,
+    .dashboard-finance-card {
+        min-width: 0;
+    }
+
     .project-action-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -77,13 +84,26 @@
         gap: 1rem;
     }
 
-    @media (max-width: 1024px) {
-        .dashboard-shell {
-            padding: 1rem 0;
-        }
+    .summary-panel,
+    .proposal-card,
+    .request-card,
+    .payment-row {
+        overflow-wrap: anywhere;
+    }
 
+    @media (max-width: 1280px) {
         .dashboard-grid {
             grid-template-columns: 1fr;
+        }
+
+        .dashboard-header-row {
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-shell {
+            padding: 0.75rem 0;
         }
     }
 
@@ -103,11 +123,11 @@
         }
 
         .dashboard-mobile-title {
-            font-size: 2.2rem !important;
+            font-size: 1.9rem !important;
         }
 
         .dashboard-progress-number {
-            font-size: 4rem !important;
+            font-size: 3.2rem !important;
         }
 
         .dashboard-status-box {
@@ -124,6 +144,11 @@
         .project-metrics {
             grid-template-columns: 1fr;
         }
+
+        .proposal-card,
+        .payment-row {
+            gap: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -136,7 +161,7 @@
             {% for listed_project in projects %}
             <a href="{% url 'index' %}?project={{ listed_project.id }}"
                 class="project-selector-card premium-border {% if project and listed_project.id == project.id %}active{% endif %}">
-                <div class="mono" style="font-size: 0.6rem; color: var(--gold-light); margin-bottom: 0.45rem;">PROJE_SECIMI</div>
+                <div class="mono" style="font-size: 0.6rem; color: var(--gold-light); margin-bottom: 0.45rem;">PROJE SEÇİMİ</div>
                 <div class="serif" style="font-size: 1.2rem; margin-bottom: 0.35rem;">{{ listed_project.name }}</div>
                 <div class="mono" style="font-size: 0.7rem; opacity: 0.6;">{{ listed_project.status|upper }} / {{ listed_project.progress }}%</div>
             </a>
@@ -151,19 +176,19 @@
                     // AKTİF PROJE
                 </span>
                 <h1 class="dashboard-mobile-title" style="font-size: 3.5rem; line-height: 1.1; margin: 0;">
-                    {% if project %}{{ project.name|upper }}{% else %}PROJE_ATÖLYESİ{% endif %}
+                    {% if project %}{{ project.name|upper }}{% else %}PROJE PANOSU{% endif %}
                 </h1>
                 <p class="mono" style="opacity: 0.6; margin-top: 1rem; font-size: 0.8rem;">
-                    KAYIT_ID: #{{ project.id|default:"0000" }} | LOKASYON: TR
+                    KAYIT NO: #{{ project.id|default:"0000" }} | KONUM: TR
                 </p>
             </div>
 
             <div class="dashboard-status-box" style="text-align: right;">
                     <a href="{% url 'create_service_request' %}{% if project %}?project={{ project.id }}{% endif %}" class="btn-gold dashboard-action-button"
                         style="margin-bottom: 1rem; padding: 0.85rem 1.5rem; font-size: 0.7rem; letter-spacing: 2px;">
-                        YENI_TALEP_OLUSTUR
+                        Yeni talep oluştur
                     </a>
-                <div class="mono" style="font-size: 0.75rem; opacity: 0.5; letter-spacing: 2px;">OPERASYONEL_DURUM</div>
+                <div class="mono" style="font-size: 0.75rem; opacity: 0.5; letter-spacing: 2px;">GENEL DURUM</div>
                 <div class="serif"
                     style="color: var(--gold-light); font-size: 1.8rem; text-shadow: 0 0 15px rgba(192, 154, 69, 0.3);">
                     {{ project.status|upper|default:"BEKLEMEDE" }}
@@ -175,10 +200,10 @@
     {% if project %}
     <div class="dashboard-grid">
 
-        <aside class="premium-border"
+        <aside class="premium-border dashboard-side-card"
             style="padding: 2rem; background: var(--bg-elevated); border-left: 3px solid var(--gold-metallic);">
             <h3 class="serif" style="font-size: 0.9rem; margin-bottom: 2rem; color: var(--gold-light);">
-                PROJE_PARAMETRELERİ</h3>
+                Proje bilgileri</h3>
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">MÜŞTERİ / MARKA</label>
@@ -192,7 +217,7 @@
 
             <div style="margin-bottom: 1.5rem;">
                 <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block;">HEDEF TARİH</label>
-                <span class="mono" style="font-size: 0.9rem;">{{ project.target_date|date:"d F Y"|default:"BELIRLENMEDI" }}</span>
+                <span class="mono" style="font-size: 0.9rem;">{{ project.target_date|date:"d F Y"|default:"Belirlenmedi" }}</span>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
@@ -200,26 +225,26 @@
                 <span class="mono" style="font-size: 0.8rem; color: var(--gold-faded);">{{ project.technology_stack|default:"Tanımlanmadı" }}</span>
             </div>
 
-            <div style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05); margin-top: 2rem;">
-                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block; margin-bottom: 0.5rem;">PROJE OZETI</label>
-                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">{{ project.summary|default:"Bu proje icin yonetici tarafindan ozet eklenmedi." }}</p>
+            <div class="summary-panel" style="background: rgba(255,255,255,0.02); padding: 1rem; border: 1px solid rgba(255,255,255,0.05); margin-top: 2rem;">
+                <label class="mono" style="font-size: 0.6rem; opacity: 0.5; display: block; margin-bottom: 0.5rem;">PROJE ÖZETİ</label>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">{{ project.summary|default:"Bu proje için yönetici tarafından henüz bir özet eklenmedi." }}</p>
             </div>
 
             <div class="project-action-grid">
                 <a href="{% url 'file_center' %}?project={{ project.id }}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">DOSYALAR</a>
-                <a href="{% url 'finance_overview' %}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">FINANS</a>
-                <a href="{% url 'create_service_request' %}?project={{ project.id }}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">TALEP OLUSTUR</a>
+                <a href="{% url 'finance_overview' %}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">FİNANS</a>
+                <a href="{% url 'create_service_request' %}?project={{ project.id }}" class="btn-gold" style="text-align: center; padding: 0.8rem 1rem;">Talep oluştur</a>
             </div>
 
             <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div class="mono" style="font-size: 0.6rem; color: #2ecc71; margin-bottom: 0.5rem;">● SİSTEM_AKTİF</div>
+                <div class="mono" style="font-size: 0.6rem; color: #2ecc71; margin-bottom: 0.5rem;">● SİSTEM AKTİF</div>
                 <p class="mono" style="font-size: 0.65rem; opacity: 0.5; line-height: 1.6;">
-                    Tüm veriler uçtan uca şifrelenmiştir. Erişim yetkisi: Yönetici.
+                    Tüm veriler uçtan uca şifrelenir. Erişim yetkileri yalnızca yetkili kullanıcılarla sınırlandırılır.
                 </p>
             </div>
         </aside>
 
-        <main>
+        <main class="dashboard-main-card">
             <div class="premium-border"
                 style="background: var(--bg-elevated); padding: 3rem; margin-bottom: 2.5rem; position: relative; overflow: hidden;">
                 <div style="position: absolute; top: -20px; right: -20px; font-size: 10rem; opacity: 0.03; font-weight: bold;"
@@ -248,13 +273,13 @@
                 <div class="status-grid">
                     <div
                         style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);">
-                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">SON_GÜNCELLEME
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">SON GÜNCELLEME
                         </div>
-                        <div class="mono" style="font-size: 0.8rem;">{{ project.updated_at|date:"H:i /d.m.y"|default:"ŞİMDİ" }}</div>
+                        <div class="mono" style="font-size: 0.8rem;">{{ project.updated_at|date:"H:i / d.m.y"|default:"Şimdi" }}</div>
                     </div>
                     <div
                         style="background: rgba(255,255,255,0.02); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);">
-                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">KRİTİK_EŞİK</div>
+                        <div class="mono" style="font-size: 0.6rem; opacity: 0.5; margin-bottom: 5px;">DURUM ÖZETİ</div>
                         <div class="mono" style="font-size: 0.8rem; color: var(--gold-light);">{{project.status|upper }}</div>
                     </div>
                 </div>
@@ -279,23 +304,23 @@
                 <h3 class="serif"
                     style="margin-bottom: 1.5rem; font-size: 0.9rem; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
                     <span style="width: 8px; height: 8px; background: var(--gold-metallic); border-radius: 50%;"></span>
-                    ONAY BEKLEYEN PROTOKOLLER
+                    Onay bekleyen teklifler
                 </h3>
 
                 {% if proposals %}
                 {% for proposal in proposals %}
-                <div class="premium-border"
-                    style="padding: 1.5rem 2rem; background: rgba(192, 154, 69, 0.03); display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border: 1px solid rgba(192, 154, 69, 0.1);">
+                <div class="premium-border proposal-card"
+                    style="padding: 1.5rem 2rem; background: rgba(192, 154, 69, 0.03); display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; border: 1px solid rgba(192, 154, 69, 0.1);">
                     <div style="max-width: 70%;">
                         <span class="mono"
-                            style="font-size: 0.6rem; color: var(--gold-light); display: block; margin-bottom: 0.3rem;">DOKÜMAN_REF:
+                            style="font-size: 0.6rem; color: var(--gold-light); display: block; margin-bottom: 0.3rem;">DOKÜMAN NO:
                             #PRP-{{ proposal.id }}</span>
-                        <span class="serif" style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">{{proposal.title|default:"Teknik Revizyon Onayı" }}</span>
+                        <span class="serif" style="font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">{{proposal.title|default:"Teknik revizyon onayı" }}</span>
                         <span class="mono" style="font-size: 0.75rem; opacity: 0.7; line-height: 1.4;">{{proposal.content|truncatewords:12 }}</span>
                     </div>
                     <a href="{% url 'approve_proposal' proposal.id %}" class="btn-gold"
                         style="text-decoration: none; padding: 0.8rem 1.5rem; font-size: 0.7rem; letter-spacing: 2px;">
-                        PROTOKOLÜ_ONAYLA
+                        Teklifi onayla
                     </a>
                 </div>
                 {% endfor %}
@@ -311,56 +336,56 @@
                 <h3 class="serif"
                     style="margin-bottom: 1.5rem; font-size: 0.9rem; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
                     <span style="width: 8px; height: 8px; background: var(--gold-metallic); border-radius: 50%;"></span>
-                    PROJE TALEPLERI
+                    Son talepler
                 </h3>
 
                 <div class="project-request-list">
                     {% for request_item in service_requests %}
-                    <div class="premium-border" style="padding: 1.35rem 1.5rem; background: rgba(255,255,255,0.02);">
+                    <div class="premium-border request-card" style="padding: 1.35rem 1.5rem; background: rgba(255,255,255,0.02);">
                         <div style="display: flex; justify-content: space-between; gap: 1rem; align-items: start; margin-bottom: 0.6rem; flex-wrap: wrap;">
                             <div>
                                 <div class="serif" style="font-size: 1.1rem; margin-bottom: 0.2rem;">{{ request_item.title }}</div>
                                 <div class="mono" style="font-size: 0.66rem; opacity: 0.6;">{{ request_item.created_at|date:"d.m.Y H:i" }}</div>
                             </div>
-                            <div class="mono" style="font-size: 0.66rem; color: var(--gold-light);">{{ request_item.get_urgency_display|upper }} / {{ request_item.budget|floatformat:2 }} TRY</div>
+                            <div class="mono" style="font-size: 0.66rem; color: var(--gold-light);">{{ request_item.get_urgency_display|upper }} / {{ request_item.budget|floatformat:2 }} TL</div>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.7;">{{ request_item.description|truncatewords:18 }}</p>
                     </div>
                     {% empty %}
                     <div style="padding: 2rem; border: 1px dashed rgba(255,255,255,0.1); text-align: center;">
-                        <p class="mono" style="opacity: 0.45; font-size: 0.8rem;">Bu projeye ait kayitli talep bulunmuyor.</p>
+                        <p class="mono" style="opacity: 0.45; font-size: 0.8rem;">Bu projeye ait kayıtlı talep bulunmuyor.</p>
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </main>
 
-        <aside>
+        <aside class="dashboard-finance-card">
             <div class="premium-border"
                 style="padding: 2rem; background: var(--bg-elevated); border-top: 2px solid var(--gold-metallic);">
-                <h3 class="serif" style="margin-bottom: 2rem; font-size: 1rem; letter-spacing: 1px;">MALİ_DÖKÜM</h3>
+                <h3 class="serif" style="margin-bottom: 2rem; font-size: 1rem; letter-spacing: 1px;">Ödeme özeti</h3>
 
                 <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
                     {% for payment in payments %}
-                    <div
+                    <div class="payment-row"
                         style="margin-bottom: 2rem; position: relative; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <span class="mono" style="font-size: 1rem; color: var(--text-pure); font-weight: bold;">
                                 {{ payment.amount|floatformat:2 }} <span
-                                    style="font-size: 0.7rem; color: var(--gold-light);">TRY</span>
+                                    style="font-size: 0.7rem; color: var(--gold-light);">TL</span>
                             </span>
                             <span class="mono"
                                 style="font-size: 0.55rem; padding: 3px 8px; border-radius: 2px; letter-spacing: 1px;
                                 border: 1px solid {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %}; 
                                 color: {% if payment.status == 'Paid' %}#2ecc71{% else %}var(--gold-metallic){% endif %};">
-                                {{ payment.status|upper }}
+                                {% if payment.status == 'Paid' %}ÖDENDİ{% else %}BEKLİYOR{% endif %}
                             </span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span class="mono" style="font-size: 0.65rem; opacity: 0.4;">VADE: {{
                                 payment.due_date|date:"d.m.Y" }}</span>
-                            <span class="mono" style="font-size: 0.6rem; opacity: 0.6;">REF_{{ forloop.counter|add:100
+                            <span class="mono" style="font-size: 0.6rem; opacity: 0.6;">REF-{{ forloop.counter|add:100
                                 }}</span>
                         </div>
                     </div>
@@ -376,11 +401,10 @@
                         <span
                             style="width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 8px #2ecc71;"></span>
                         <div class="mono" style="font-size: 0.65rem; color: var(--gold-light); letter-spacing: 1px;">
-                            SİSTEM_GÜNLÜĞÜ</div>
+                            SİSTEM DURUMU</div>
                     </div>
                     <p class="mono" style="font-size: 0.65rem; line-height: 1.5; opacity: 0.8;">
-                        Bağlantı kararlı. Veri paketleri <b>TurkishSystems</b> ana sunucuları ile %100 senkronize
-                        edildi. Son denetim başarılı.
+                        Bağlantı kararlı. Veriler <b>TurkishSystems</b> sunucuları ile senkronize edildi. Son kontrol başarılı.
                     </p>
                 </div>
             </div>
@@ -399,7 +423,7 @@
         </p>
         <a href="{% url 'create_service_request' %}" class="btn-gold"
             style="margin-top: 3rem; padding: 1rem 3rem; text-decoration: none;">
-            YENI_TALEP_OLUSTUR
+            Yeni talep oluştur
         </a>
     </div>
     {% endif %}

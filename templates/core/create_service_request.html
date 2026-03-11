@@ -1,14 +1,86 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .request-page {
+        max-width: 920px;
+        margin: 0 auto;
+    }
+
+    .request-title {
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1.1;
+    }
+
+    .request-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .request-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        border-top: 1px solid rgba(192, 154, 69, 0.15);
+        padding-top: 1.5rem;
+    }
+
+    form input,
+    form select,
+    form textarea {
+        width: 100%;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(192, 154, 69, 0.16);
+        color: var(--text-pure);
+        padding: 0.95rem 1rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+    }
+
+    form textarea {
+        resize: vertical;
+    }
+
+    form input:focus,
+    form select:focus,
+    form textarea:focus {
+        outline: none;
+        border-color: var(--gold-metallic);
+        box-shadow: var(--glow);
+    }
+
+    form input[type="file"] {
+        padding: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        .request-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .request-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .request-form {
+            padding: 1.2rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 920px; margin: 0 auto;">
+<div class="request-page">
     <header style="margin-bottom: 2.5rem; border-bottom: 1px solid rgba(192, 154, 69, 0.2); padding-bottom: 1.5rem;">
-        <span class="mono" style="color: var(--gold-metallic); display: block; margin-bottom: 0.8rem; letter-spacing: 2px;">// YENI TALEP</span>
-        <h1 style="font-size: 3rem; line-height: 1.08;">Yeni Talep<br><span style="font-style: italic;">Olustur</span></h1>
-        <p class="mono" style="margin-top: 1rem; opacity: 0.55; max-width: 720px;">Talep adini, aciklamasini, butcesini, gorsellerini ve aciliyetini ekleyin. Projeniz varsa secin, yoksa sistem yeni proje uzerinden talebi kaydeder.</p>
+        <span class="mono" style="color: var(--gold-metallic); display: block; margin-bottom: 0.8rem; letter-spacing: 2px;">// YENİ TALEP</span>
+        <h1 class="request-title">Yeni talep<br><span style="font-style: italic;">oluştur</span></h1>
+        <p class="mono" style="margin-top: 1rem; opacity: 0.72; max-width: 720px;">Talebin adını, açıklamasını, bütçesini, görsellerini ve önceliğini ekleyin. Mevcut bir projeniz varsa seçin; yoksa sistem yeni proje altında kayıt oluşturur.</p>
     </header>
 
-    <form method="post" enctype="multipart/form-data" class="premium-border" style="background: var(--bg-elevated); padding: 2rem;">
+    <form method="post" enctype="multipart/form-data" class="premium-border request-form" style="background: var(--bg-elevated); padding: 2rem;">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
@@ -17,7 +89,7 @@
         </div>
         {% endif %}
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+        <div class="request-grid" style="margin-bottom: 1.25rem;">
             <div>
                 <label class="mono" for="{{ form.project_choice.id_for_label }}" style="display: block; margin-bottom: 0.55rem; font-size: 0.72rem; color: var(--gold-light);">{{ form.project_choice.label }}</label>
                 {{ form.project_choice }}
@@ -50,7 +122,7 @@
             {% endfor %}
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+        <div class="request-grid" style="margin-bottom: 1.5rem;">
             <div>
                 <label class="mono" for="{{ form.budget.id_for_label }}" style="display: block; margin-bottom: 0.55rem; font-size: 0.72rem; color: var(--gold-light);">{{ form.budget.label }}</label>
                 {{ form.budget }}
@@ -61,47 +133,17 @@
             <div>
                 <label class="mono" for="{{ form.attachments.id_for_label }}" style="display: block; margin-bottom: 0.55rem; font-size: 0.72rem; color: var(--gold-light);">{{ form.attachments.label }}</label>
                 {{ form.attachments }}
-                <div class="mono" style="margin-top: 0.45rem; opacity: 0.5; font-size: 0.62rem;">PNG, JPG, JPEG ve WEBP dosyalari yukleyebilirsiniz.</div>
+                <div class="mono" style="margin-top: 0.45rem; opacity: 0.5; font-size: 0.62rem;">PNG, JPG, JPEG ve WEBP dosyaları yükleyebilirsiniz.</div>
                 {% for error in form.attachments.errors %}
                 <div class="mono" style="margin-top: 0.4rem; color: #f5b7b1; font-size: 0.65rem;">{{ error }}</div>
                 {% endfor %}
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid rgba(192, 154, 69, 0.15); padding-top: 1.5rem;">
-            <a href="{% url 'index' %}" class="mono" style="text-decoration: none; color: var(--text-muted);">Panele Don</a>
-            <button type="submit" class="btn-gold">TALEBI_GONDER</button>
+        <div class="request-footer">
+            <a href="{% url 'index' %}" class="mono" style="text-decoration: none; color: var(--text-muted);">Panele dön</a>
+            <button type="submit" class="btn-gold">Talebi gönder</button>
         </div>
     </form>
 </div>
-
-<style>
-    form input,
-    form select,
-    form textarea {
-        width: 100%;
-        background: rgba(255,255,255,0.02);
-        border: 1px solid rgba(192, 154, 69, 0.16);
-        color: var(--text-pure);
-        padding: 0.95rem 1rem;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-    }
-
-    form textarea {
-        resize: vertical;
-    }
-
-    form input:focus,
-    form select:focus,
-    form textarea:focus {
-        outline: none;
-        border-color: var(--gold-metallic);
-        box-shadow: var(--glow);
-    }
-
-    form input[type="file"] {
-        padding: 0.75rem;
-    }
-</style>
 {% endblock %}

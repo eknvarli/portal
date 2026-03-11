@@ -1,50 +1,108 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .file-center-layout {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .file-center-title {
+        font-size: clamp(2rem, 4.6vw, 4rem);
+        line-height: 1.05;
+    }
+
+    .document-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+
+    .comment-form textarea {
+        background: transparent !important;
+        border: 1px solid var(--gold-faded) !important;
+        color: var(--text-pure) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.8rem !important;
+        width: 100% !important;
+        resize: vertical !important;
+        min-height: 120px;
+        padding: 1rem !important;
+    }
+
+    .comment-form textarea:focus {
+        outline: none !important;
+        border-color: var(--gold-metallic) !important;
+        box-shadow: var(--glow) !important;
+    }
+
+    @media (max-width: 900px) {
+        .document-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .document-header {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .file-card {
+            padding: 1.4rem !important;
+        }
+
+        .comment-panel {
+            padding: 1.2rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto;">
+<div class="file-center-layout">
     <header style="margin-bottom: 5rem;">
         <span class="mono" style="color: var(--gold-metallic); display: block; margin-bottom: 1rem;">//
-            VARLIK_KÜTÜPHANESİ</span>
-        <h1 style="font-size: 4rem; line-height: 1;">Dijital<br><span style="font-style: italic;">Atölyeler</span></h1>
-        <p class="mono" style="margin-top: 1.5rem; opacity: 0.5; font-size: 0.8rem; max-width: 600px;">Tüm teknik
-            şartnameler, tasarım taslakları ve proje planları için güvenli depo. Revizyonları aşağıdaki terminal
-            aracılığıyla onaylayın.</p>
+            DOSYA MERKEZİ</span>
+        <h1 class="file-center-title">Proje<br><span style="font-style: italic;">dosyaları</span></h1>
+        <p class="mono" style="margin-top: 1.5rem; opacity: 0.68; font-size: 0.8rem; max-width: 600px;">Teknik dökümanları, tasarım dosyalarını ve proje planlarını bu alandan görüntüleyebilir; gerektiğinde yorum ekleyerek revizyon talebi bırakabilirsiniz.</p>
     </header>
 
     <div style="display: grid; grid-template-columns: 1fr; gap: 4rem;">
         {% for doc in documents %}
-        <div class="premium-border" style="background: var(--bg-elevated); padding: 3rem;">
-            <div
-                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; border-bottom: var(--border-gold); padding-bottom: 2rem;">
+        <div class="premium-border file-card" style="background: var(--bg-elevated); padding: 3rem;">
+            <div class="document-header"
+                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; border-bottom: var(--border-gold); padding-bottom: 2rem; gap: 1.5rem;">
                 <div>
                     <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 0.5rem;">{{ doc.name }}</h3>
-                    <div class="mono" style="font-size: 0.7rem; opacity: 0.5;">YÜKLEME_ZAMANI:
+                    <div class="mono" style="font-size: 0.7rem; opacity: 0.5;">YÜKLEME TARİHİ:
                         {{doc.uploaded_at|date:"Y.m.d // H:i" }}</div>
                 </div>
                 <a href="{{ doc.file.url }}" class="btn-gold" download>
-                    Dosyayı_İndir
+                    Dosyayı indir
                 </a>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+            <div class="document-layout">
                 <div>
                     <h4 class="mono"
                         style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 1.5rem; text-transform: uppercase;">
-                        Revizyon_Defteri</h4>
+                        Revizyon geçmişi</h4>
                     <div style="max-height: 400px; overflow-y: auto; padding-right: 1.5rem;">
                         {% for comment in doc.comments.all %}
                         <div
                             style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border-left: 2px solid var(--gold-metallic);">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; gap: 1rem; flex-wrap: wrap;">
                                 <span class="mono"
                                     style="font-weight: 600; font-size: 0.75rem; color: var(--text-pure);">{{comment.user.username|upper}}</span>
                                 <span class="mono"
-                                    style="font-size: 0.6rem; opacity: 0.4;">{{comment.timestamp|date:"d.m //H:i"}}</span>
+                                    style="font-size: 0.6rem; opacity: 0.4;">{{comment.timestamp|date:"d.m // H:i"}}</span>
                             </div>
                             <p style="font-size: 0.9rem; color: var(--text-muted);">{{ comment.text }}</p>
                         </div>
                         {% empty %}
-                        <p class="mono" style="opacity: 0.3; font-size: 0.75rem;">Bu varlık için kayıtlı revizyon yok.
+                        <p class="mono" style="opacity: 0.3; font-size: 0.75rem;">Bu dosya için henüz yorum bulunmuyor.
                         </p>
                         {% endfor %}
                     </div>
@@ -53,33 +111,15 @@
                 <div>
                     <h4 class="mono"
                         style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 1.5rem; text-transform: uppercase;">
-                        Giriş_Protokolü</h4>
-                    <form method="post" style="background: rgba(0,0,0,0.2); padding: 2rem; border: var(--border-gold);">
+                        Yorum ekle</h4>
+                    <form method="post" class="comment-form comment-panel" style="background: rgba(0,0,0,0.2); padding: 2rem; border: var(--border-gold);">
                         {% csrf_token %}
                         <input type="hidden" name="document_id" value="{{ doc.id }}">
                         <div style="margin-bottom: 2rem;">
                             {{ comment_form.text }}
-                            <style>
-                                textarea {
-                                    background: transparent !important;
-                                    border: 1px solid var(--gold-faded) !important;
-                                    color: var(--text-pure) !important;
-                                    font-family: 'JetBrains Mono', monospace !important;
-                                    font-size: 0.8rem !important;
-                                    width: 100% !important;
-                                    resize: none !important;
-                                    padding: 1rem !important;
-                                }
-
-                                textarea:focus {
-                                    outline: none !important;
-                                    border-color: var(--gold-metallic) !important;
-                                    box-shadow: var(--glow) !important;
-                                }
-                            </style>
                         </div>
                         <button type="submit" class="btn-gold" style="width: 100%;">
-                            Yönergeyi_Gönder
+                            Yorumu gönder
                         </button>
                     </form>
                 </div>
@@ -87,8 +127,8 @@
         </div>
         {% empty %}
         <div class="premium-border" style="padding: 5rem; text-align: center; background: var(--bg-elevated);">
-            <h2 class="serif">Senkronize Edilmiş Varlık Yok</h2>
-            <p class="mono" style="margin-top: 1rem; opacity: 0.5;">Atölyeden teknik varlık senkronizasyonu bekleniyor.
+            <h2 class="serif">Henüz dosya bulunmuyor</h2>
+            <p class="mono" style="margin-top: 1rem; opacity: 0.5;">Bu proje için henüz paylaşılmış bir dosya bulunmuyor.
             </p>
         </div>
         {% endfor %}

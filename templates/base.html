@@ -13,13 +13,15 @@
         :root {
             --bg-deep: #0D0B09;
             --bg-elevated: #141210;
+            --bg-panel: #1B1815;
 
             --gold-metallic: #C09A45;
             --gold-light: #D4B673;
             --gold-faded: rgba(192, 154, 69, 0.2);
 
             --text-pure: #FFFFFF;
-            --text-muted: #B3B3B3;
+            --text-muted: #CEC6BA;
+            --text-soft: #9E9589;
 
             --border-gold: 1px solid var(--gold-faded);
             --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
@@ -34,7 +36,10 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-deep);
+            background:
+                radial-gradient(circle at top right, rgba(212, 182, 115, 0.08), transparent 28%),
+                radial-gradient(circle at bottom left, rgba(192, 154, 69, 0.06), transparent 24%),
+                var(--bg-deep);
             color: var(--text-muted);
             line-height: 1.6;
             overflow-x: hidden;
@@ -79,7 +84,7 @@
         }
 
         .sidebar {
-            width: 300px;
+            width: 280px;
             background-color: var(--bg-elevated);
             height: 100vh;
             position: fixed;
@@ -109,6 +114,7 @@
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(192, 154, 69, 0.12);
             padding: 0.9rem 0.9rem 1.6rem 0.9rem;
+            overflow-wrap: anywhere;
         }
 
         .announcement-item h4 {
@@ -194,8 +200,23 @@
         }
 
         .main-view {
-            margin-left: 300px;
-            padding: 4rem 5rem 6rem 5rem;
+            margin-left: 280px;
+            padding: 3rem clamp(1.25rem, 3vw, 3.5rem) 6rem clamp(1.25rem, 3vw, 3.5rem);
+        }
+
+        .page-shell {
+            width: min(100%, 1280px);
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1600px) {
+            .sidebar {
+                width: 320px;
+            }
+
+            .main-view {
+                margin-left: 320px;
+            }
         }
 
         .marquee-strip {
@@ -269,12 +290,13 @@
             color: var(--gold-metallic);
             padding: 0.8rem 2rem;
             font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
             font-size: 0.8rem;
             cursor: pointer;
             transition: var(--transition-smooth);
             text-decoration: none;
             display: inline-block;
+            letter-spacing: 0.08em;
+            text-align: center;
         }
 
         .btn-gold:hover {
@@ -283,39 +305,27 @@
             box-shadow: var(--glow);
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1200px) {
             .sidebar {
-                width: 80px;
-                padding: 2rem 1rem;
+                width: 230px;
+                padding: 2rem 1.25rem;
             }
 
-            .announcement-panel {
-                display: none;
+            .announcement-item p {
+                font-size: 0.68rem;
             }
 
-            .brand-logo h2 span,
-            .nav-link span,
-            .sidebar-footer span {
-                display: none;
+            .brand-logo h2 {
+                font-size: 1.3rem;
             }
 
             .main-view {
-                margin-left: 80px;
-                padding: 2rem;
+                margin-left: 230px;
+                padding: 2rem 1.5rem 6rem 1.5rem;
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding-bottom: 40px;
-            }
-
-            .bg-glow-ring {
-                width: 320px;
-                height: 320px;
-                filter: blur(55px);
-            }
-
+        @media (max-width: 900px) {
             .sidebar {
                 display: none;
             }
@@ -326,6 +336,11 @@
                 justify-content: space-between;
                 gap: 1rem;
                 padding: 1rem 1rem 0 1rem;
+                position: sticky;
+                top: 0;
+                z-index: 120;
+                background: linear-gradient(180deg, rgba(13, 11, 9, 0.95), rgba(13, 11, 9, 0.78));
+                backdrop-filter: blur(10px);
             }
 
             .mobile-topbar-nav {
@@ -344,6 +359,38 @@
             .main-view {
                 margin-left: 0;
                 padding: 1rem 1rem 5rem 1rem;
+            }
+
+            .page-shell {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 40px;
+            }
+
+            .bg-glow-ring {
+                width: 320px;
+                height: 320px;
+                filter: blur(55px);
+            }
+
+            .mobile-topbar {
+                align-items: flex-start;
+            }
+
+            .mobile-topbar-nav {
+                justify-content: flex-start;
+            }
+
+            .mobile-topbar-nav a {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .brand-logo h2 {
+                font-size: 1.05rem !important;
             }
 
             .premium-border::before,
@@ -375,7 +422,7 @@
             <h2 style="font-size: 1.25rem;">TS<span>Portal</span></h2>
         </a>
         <div class="mobile-topbar-nav">
-            <a href="{% url 'index' %}" class="btn-gold">Genel</a>
+            <a href="{% url 'index' %}" class="btn-gold">Ana sayfa</a>
             <a href="{% url 'file_center' %}" class="btn-gold">Dosyalar</a>
             <a href="{% url 'finance_overview' %}" class="btn-gold">Finans</a>
         </div>
@@ -430,7 +477,7 @@
         </ul>
 
         <div class="sidebar-footer">
-            <div class="mono" style="color: var(--gold-light); margin-bottom: 0.5rem; font-size: 0.7rem;">SİSTEM_AKTİF
+            <div class="mono" style="color: var(--gold-light); margin-bottom: 0.5rem; font-size: 0.7rem;">SİSTEM AKTİF
             </div>
             <div style="font-size: 0.8rem; color: var(--text-pure);">{{ user.username }}</div>
             <a href="{% url 'logout' %}"
@@ -443,25 +490,27 @@
 
     <main class="main-view" {% if not user.is_authenticated%}
         style="margin-left: 0; display: flex; align-items: center; justify-content: center;" {% endif %}>
-        {% if messages %}
-        <div style="max-width: 1200px; margin: 0 auto 1.5rem auto;">
-            {% for message in messages %}
-            <div class="premium-border"
-                style="padding: 1rem 1.25rem; background: rgba(46, 204, 113, 0.08); border-color: rgba(46, 204, 113, 0.35); color: var(--text-pure); margin-bottom: 1rem;">
-                <span class="mono" style="font-size: 0.75rem; color: #9ae6b4;">{{ message }}</span>
+        <div class="page-shell">
+            {% if messages %}
+            <div style="max-width: 1200px; margin: 0 auto 1.5rem auto;">
+                {% for message in messages %}
+                <div class="premium-border"
+                    style="padding: 1rem 1.25rem; background: rgba(46, 204, 113, 0.08); border-color: rgba(46, 204, 113, 0.35); color: var(--text-pure); margin-bottom: 1rem;">
+                    <span class="mono" style="font-size: 0.75rem; color: #9ae6b4;">{{ message }}</span>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
         </div>
-        {% endif %}
-        {% block content %}{% endblock %}
     </main>
 
     <div class="marquee-strip">
         <div class="marquee-content">
-            <div class="marquee-item">TURKISHSYSTEMS // DİJİTAL MÜKEMMELLİK // REVİZYON 2026.03</div>
-            <div class="marquee-item">İSTANBUL'DA KURULDU // HASSAS MÜHENDİSLİK // SANATSAL VİZYON</div>
-            <div class="marquee-item">TURKISHSYSTEMS // DİJİTAL MÜKEMMELLİK // REVİZYON 2026.03</div>
-            <div class="marquee-item">İSTANBUL'DA KURULDU // HASSAS MÜHENDİSLİK // SANATSAL VİZYON</div>
+            <div class="marquee-item">TURKISHSYSTEMS // GÜVENLİ MÜŞTERİ PORTALI // GÜNCEL SÜRÜM 2026.03</div>
+            <div class="marquee-item">PROJE TAKİBİ // DOSYA PAYLAŞIMI // FİNANS BİLDİRİMLERİ</div>
+            <div class="marquee-item">TURKISHSYSTEMS // GÜVENLİ MÜŞTERİ PORTALI // GÜNCEL SÜRÜM 2026.03</div>
+            <div class="marquee-item">PROJE TAKİBİ // DOSYA PAYLAŞIMI // FİNANS BİLDİRİMLERİ</div>
         </div>
     </div>
 </body>
